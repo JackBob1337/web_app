@@ -15,7 +15,7 @@ class User_Create(BaseModel):
         if not any(char.isupper() for char in value):
             raise ValueError("Password must contain at least one uppercase letter")
         
-        if not any(char.isupper() for char in value):
+        if not any(char.islower() for char in value):
             raise ValueError("Password must contain at least one lowercase letter")
 
         return value
