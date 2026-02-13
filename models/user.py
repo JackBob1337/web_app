@@ -20,7 +20,6 @@ class User_Create(BaseModel):
 
         return value
 
-
 class User_Out(BaseModel):
     id: int
     username: str
@@ -29,3 +28,9 @@ class User_Out(BaseModel):
 
     class Config:
         from_attributes = True
+
+class User_Login(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8, max_length=72)
+
+
