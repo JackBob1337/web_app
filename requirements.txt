@@ -6,4 +6,4 @@ passlib[bcrypt]
 uvicorn
 pydantic[email]
 pytest
-httpx
+PyJWT

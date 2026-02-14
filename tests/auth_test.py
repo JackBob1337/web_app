@@ -193,8 +193,11 @@ def test_login_ok():
     }
 
     response = client.post("/auth/login", json=payload)
-    
+    data = response.json()
+
     assert response.status_code == 200
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
 
 def test_login_wrong_password():
     payload = {
