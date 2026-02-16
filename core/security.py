@@ -8,6 +8,7 @@ from core.config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 
 _BCRYPT_ROUNDS = 12
 
+
 def _sha256_hexdigest_bytes(password: str) -> bytes:
     return hashlib.sha256(password.encode()).hexdigest().encode()
 
@@ -44,4 +45,3 @@ def decode_access_token(token: str) -> Optional[dict]:
     
     except jwt.InvalidTokenError:
         return None
-    
