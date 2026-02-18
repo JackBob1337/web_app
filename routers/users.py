@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from db.session import get_db
 from core.dependencies import get_current_user
-from crud.user import set_admin_role
+from services.user import UserService
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,15 +15,15 @@ def make_admin(user_id: int,
     if current_user.role != "super_admin":
         logger.warning("Unauthorized attempt to set admin role by user ID: %s", current_user.id)
         raise HTTPException(status_code=403, detail="Only super-admins can set admin role")
+    service = UserService(db)
     
-    user = set_admin_role(db, user_id)
-    if not user:
-        logger.warning("User not found for ID: %s", user_id)
-        raise HTTPException(status_code=404, detail="User not found")
+    try:
+        user = service.set_user_role_admin(user_id)
+        logger.info("User ID %s set to admin by super-admin ID: %s", user_id, current_user.id)
+        return {"message": f"User {user.username} is now an admin"}
     
-    logger.info("User ID %s set to admin by super-admin ID: %s", user_id, current_user.id)
-    return {"message": f"User {user.username} is now an admin"}
-#Jack_Bob1337
-
-
-
+    except HTTPException as e:
+        if e.status_code == 404:
+            logger.warning("Attempt to set admin role for non-existent user ID: %s by super-admin ID: %s", 
+                           user_id, current_user.id)
+        raise 

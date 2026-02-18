@@ -180,7 +180,7 @@ def test_too_long_number():
         "phone_number": "+ 48 123 123 123 123 123 123"
     }
 
-    response = client.post("auth/register", json=payload)
+    response = client.post("/auth/register", json=payload)
     data = response.json()
 
     assert response.status_code == 422

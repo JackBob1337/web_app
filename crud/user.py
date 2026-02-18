@@ -30,7 +30,7 @@ def set_admin_role(db: Session, user_id: int) -> UserModel | None:
 
     if not user:
         return None
-    
+        
     user.role = "admin"
     db.commit()
     db.refresh(user)
