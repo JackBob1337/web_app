@@ -15,6 +15,7 @@ def make_admin(user_id: int,
     if current_user.role != "super_admin":
         logger.warning("Unauthorized attempt to set admin role by user ID: %s", current_user.id)
         raise HTTPException(status_code=403, detail="Only super-admins can set admin role")
+
     service = UserService(db)
     
     try:

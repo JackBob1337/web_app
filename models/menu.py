@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class MenuItemOut(BaseModel):
     id: int
@@ -15,16 +15,16 @@ class MenuItemOut(BaseModel):
 class MenuItemCreate(BaseModel):
     name: str
     description: str | None = None
-    price_cents: int
-    stock: int = 0
+    price_cents: int = Field(..., gt=0)
+    stock: int = Field(0, ge=0)
     is_available: bool = True
     category_id: int
 
 class MenuItemUpdate(BaseModel):
     name: str | None = None
     description: str| None = None
-    price_cents: int | None = None
-    stock: int |None = None
+    price_cents: int | None = Field(None, gt=0)
+    stock: int |None = Field(None, ge=0)
     is_available: bool | None = None
     category_id: int | None = None
 
@@ -38,3 +38,6 @@ class CategoryOut(BaseModel):
 
 class CategoryCreate(BaseModel):
     name: str
+
+class CategoryUpdate(BaseModel):
+    name: str | None = None

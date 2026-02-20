@@ -15,7 +15,7 @@ class MenuItem(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(nullable=False)
-    description: Mapped[str] = mapped_column(Text, nullable=True)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
     price_cents: Mapped[int] = mapped_column(Integer, nullable=False)
     stock: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     is_available: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)

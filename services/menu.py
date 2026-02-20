@@ -1,4 +1,4 @@
-from crud.menu import create_category
+import crud.menu as menu_crud
 from fastapi import HTTPException
 from models.menu import CategoryCreate
 
@@ -10,10 +10,15 @@ class MenuService:
     
     def create_category(self, name: str):
         category_in = CategoryCreate(name=name)
-        category = create_category(self.db, category_in)
+        category = menu_crud.create_category(self.db, category_in)
 
         if not category:
             raise HTTPException(status_code=400, detail="Category already exists")
         
         return category
+    
+    
+                           
+    
+
         
