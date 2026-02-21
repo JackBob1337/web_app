@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import Mock, patch
 from fastapi import HTTPException
 
 from services.user import UserService

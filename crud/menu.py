@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session, selectinload
 from db.menu import Category as CategoryModel
 from db.menu import MenuItem as MenuItemModel
 from models.menu import CategoryCreate, CategoryUpdate, MenuItemCreate, MenuItemUpdate
+from services.domain_errors import NotFoundError, ConflictError, ValidationError
 
 def get_category_by_id(db: Session, category_id: int) -> CategoryModel | None:
     return db.query(CategoryModel).filter(CategoryModel.id == category_id).first()
@@ -161,5 +162,9 @@ def get_available_items(db: Session) -> list[MenuItemModel]:
 def get_unavailable_items(db: Session) -> list[MenuItemModel]:
     return db.query(MenuItemModel).filter(MenuItemModel.is_available == False).all()
 
-
+def get_item_by_name(db: Session, name: str) -> MenuItemModel | None:
+    if not name:
+        return None
+    
+    return db.query(MenuItemModel).filter(MenuItemModel.name == name).first()
     

@@ -8,6 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/users", tags=["users"])
 
+
 @router.post("/{user_id}/make-admin")
 def make_admin(user_id: int, 
                db: Session = Depends(get_db), 
