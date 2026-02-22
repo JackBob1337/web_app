@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 class MenuItemOut(BaseModel):
     id: int
@@ -9,8 +9,8 @@ class MenuItemOut(BaseModel):
     is_available: bool
     category_id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
+
 
 class MenuItemCreate(BaseModel):
     name: str
@@ -33,8 +33,7 @@ class CategoryOut(BaseModel):
     name: str
     items: list[MenuItemOut] = []
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 class CategoryCreate(BaseModel):
     name: str

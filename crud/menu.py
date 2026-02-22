@@ -5,6 +5,9 @@ from models.menu import CategoryCreate, CategoryUpdate, MenuItemCreate, MenuItem
 from services.domain_errors import NotFoundError, ConflictError, ValidationError
 
 def get_category_by_id(db: Session, category_id: int) -> CategoryModel | None:
+    if not category_id:
+        return None
+    
     return db.query(CategoryModel).filter(CategoryModel.id == category_id).first()
 
 def get_category_by_name(db: Session, name: str) -> CategoryModel | None:

@@ -3,7 +3,7 @@ from models.menu import CategoryCreate, CategoryUpdate, MenuItemCreate, MenuItem
 
 from sqlalchemy.orm import Session
 
-from domain_errors import NotFoundError, ConflictError, ValidationError
+from services.domain_errors import NotFoundError, ConflictError, ValidationError
 class MenuService:
     def __init__(self, db: Session):
         self.db = db
@@ -47,6 +47,11 @@ class MenuService:
 
     def update_category(self, category_id: int, name: str) -> CategoryOut:
         category_in = CategoryUpdate(name=name)
+
+        existing = menu_crud.get_category_by_name(self.db, name)
+        if existing and existing.id != category_id:
+            raise ConflictError("Category with the same name already exists")
+
         category = menu_crud.update_category(self.db, category_id, category_in)
 
         if not category:
