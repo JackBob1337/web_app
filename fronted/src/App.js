@@ -1,11 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
-import LoginSignup from './components/LoginSignup/LoginSignup';
+import LoginSignup from './pages/LoginSignup/LoginSignup';
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 
 function App() {
   return (
     <div>
-      <LoginSignup/>
+      <AdminDashboard/>
     </div>
   );
 }

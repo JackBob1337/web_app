@@ -4,6 +4,7 @@ from db.session import get_db
 from core.dependencies import get_current_user
 from services.user import UserService
 import logging
+from models.user import User_Out
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/users", tags=["users"])
@@ -29,3 +30,7 @@ def make_admin(user_id: int,
             logger.warning("Attempt to set admin role for non-existent user ID: %s by super-admin ID: %s", 
                            user_id, current_user.id)
         raise 
+
+@router.get("/me", response_model=User_Out)
+def get_current_user_info(current_user = Depends(get_current_user)):
+    return {"id": current_user.id, "username": current_user.username, "email": current_user.email, "role": current_user.role}

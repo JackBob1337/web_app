@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import './LoginSignUp.css'
 
 
-import user_icon from '../assets/person.png'
-import email_icon from '../assets/email.png'
-import phone_icon from '../assets/phone.png'
-import password_icon from '../assets/password.png'
+import user_icon from '../../components/assets/person.png';
+import email_icon from '../../components/assets/email.png';
+import phone_icon from '../../components/assets/phone.png';
+import password_icon from '../../components/assets/password.png';
 
 const LoginSignup = () => {
     const [isLogin, setIsLogin] = useState(true)
@@ -75,7 +75,7 @@ const LoginSignup = () => {
     <div className='container'>
       <div className='header'>
         <div className="text">{isLogin?'Login':'Sign Up'}</div>
-        <div className="underline"> 
+        <div className="underline">
         </div>
         <div className="dont-have-login">{isLogin ? "Don't have a login? " : "Already have a login? "}
             <span onClick={() => setIsLogin(!isLogin)}>{isLogin ? "Click here!": "Back to Login"}</span>
