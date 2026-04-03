@@ -7,7 +7,7 @@ import email_icon from '../../components/assets/email.png';
 import phone_icon from '../../components/assets/phone.png';
 import password_icon from '../../components/assets/password.png';
 
-const LoginSignup = () => {
+const LoginSignup = ({ onLoginSuccess }) => {
     const [isLogin, setIsLogin] = useState(true)
 
     const [form, setForm] = useState({
@@ -58,6 +58,7 @@ const LoginSignup = () => {
                 }
 
                 localStorage.setItem('token', data.access_token);
+                onLoginSuccess(data.access_token);
 
                 setForm({
                     username: "",

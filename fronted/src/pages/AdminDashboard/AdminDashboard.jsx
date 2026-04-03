@@ -1,18 +1,72 @@
 
-import React, { useState } from 'react' 
+import React, { useEffect, useState } from 'react' 
 import './AdminDashboard.css'
 import CategoryModal from '../../components/modal/CategoryModal/CategoryModal';
 
 const AdminDashboard = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [categories, setCategories] = useState([]);
+
     const handleCloseModal = () => setIsModalOpen(false);
     const handleOpenModal = () => setIsModalOpen(true);
 
-    const handleAddCategoryClick = async (data) => {
-        console.log(data);
+    const handleAddCategoryClick = async ({name}) => {
+        try {
+            const token = localStorage.getItem('token');
 
-        setIsModalOpen(false);
-    }
+            const response = await fetch('http://localhost:8000/menu/create_category', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({name}),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.message || "Something went wrong. Please try again");
+                return;
+            }
+
+            alert(`Category "${name}" created successfully`);
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Error adding category:', error);
+            alert("Network error");
+        }
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch('http://localhost:8000/menu/get_all_categories', {
+                method: 'GET',
+                headers: {
+                Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                console.log(data);
+                alert(data.detail || "Could not fetch categories");
+                return;
+            }
+
+            setCategories(data);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            alert("Network error");
+        }
+    };
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
 
   return (
     <div className='dashboard'>
@@ -28,6 +82,23 @@ const AdminDashboard = () => {
                 >Add Category</button>
                 <button className='icon-button'>Delete Category</button>
             </div>
+
+            <div>
+                <h2>Categories</h2>
+                {categories.length === 0 ? (
+                    <p>No categories found</p>
+                ) : (
+                    categories.map((category) => (
+                        <div key={category.id}>
+                            {category.name}
+                        </div>
+                    ))
+                )}
+            </div>
+
+            
+
+
         </header>
 
         <CategoryModal 

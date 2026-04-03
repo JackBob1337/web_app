@@ -56,7 +56,7 @@
     font-size: 18px;
     font-weight: 700;
     cursor: pointer;
-    background: #4c00b4;   /* тот же градиент/цвет, что у submit */
+    background: #4c00b4; 
     color: #fff;
     border: none;
     transition: opacity 0.2s ease;

@@ -1,7 +1,20 @@
-import React from 'react'
+import React, {useState} from 'react'
 import './CategoryModel.css'
 
 const CategoryModal = ({ isModalOpen, onClose, onSubmit }) => {
+    const [name, setName] = useState('');
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!name.trim()) {
+            alert("Category name cannot be empty.");
+            return;
+        }
+
+        onSubmit({ name: name.trim() });
+    }
+
     if (!isModalOpen) return null;
 
   return (
@@ -12,6 +25,17 @@ const CategoryModal = ({ isModalOpen, onClose, onSubmit }) => {
                     <h2 className="modal-title">Creating a category</h2>
                     <button className="modal-close" onClick={onClose}>X</button>
                 </div>
+                <form onSubmit={handleSubmit}>
+                    <div className="modal-bottom">
+                        <input 
+                            type="text" 
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Category name"
+                        />
+                        <button className='create-button'>Create category</button>
+                    </div>
+                </form>
             </div>    
         </div>      
     </div>
