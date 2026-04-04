@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import './AdminDashboard.css'
 import CategoryModal from '../../components/modal/CategoryModal/CategoryModal';
 
-const AdminDashboard = () => {
+const AdminDashboard = ({ onLogout }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [categories, setCategories] = useState([]);
 
@@ -81,19 +81,15 @@ const AdminDashboard = () => {
                 onClick={handleOpenModal}
                 >Add Category</button>
                 <button className='icon-button'>Delete Category</button>
+                <button className='icon-button' onClick={onLogout}>Logout</button>
             </div>
 
-            <div>
-                <h2>Categories</h2>
-                {categories.length === 0 ? (
-                    <p>No categories found</p>
-                ) : (
-                    categories.map((category) => (
-                        <div key={category.id}>
-                            {category.name}
-                        </div>
-                    ))
-                )}
+            <div className='categories-list'>
+                {categories.map((category) => (
+                    <div className='category-container' key={category.id}>
+                        <h3>{category.name}</h3>
+                    </div>
+                ))}
             </div>
 
             

@@ -70,3 +70,22 @@
 .icon-button:hover {
     opacity: 0.9;
 }
+
+.categories-list {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;  
+}
+
+.category-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: none;
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+    padding: 12px;
+    background: #fff;
+}

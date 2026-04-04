@@ -33,10 +33,15 @@ function App() {
     setRole(userRole);
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setRole(null);
+  }
+ 
   if (role === 'admin') {
     return (
       <div>
-        <AdminDashboard/>
+        <AdminDashboard onLogout={handleLogout}/>
       </div>
     );
   }
