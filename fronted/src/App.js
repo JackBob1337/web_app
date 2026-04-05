@@ -38,7 +38,7 @@ function App() {
     setRole(null);
   }
  
-  if (role === 'admin') {
+  if (role === 'admin' || role === 'super_admin') {
     return (
       <div>
         <AdminDashboard onLogout={handleLogout}/>

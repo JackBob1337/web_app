@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import './CategoryModel.css'
+import './CategoryModal.css'
 
 const CategoryModal = ({ isModalOpen, onClose, onSubmit }) => {
     const [name, setName] = useState('');

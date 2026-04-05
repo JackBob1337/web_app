@@ -11,7 +11,6 @@ class MenuItemOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-
 class MenuItemCreate(BaseModel):
     name: str
     description: str | None = None
