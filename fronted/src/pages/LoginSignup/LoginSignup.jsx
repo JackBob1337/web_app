@@ -76,8 +76,7 @@ const LoginSignup = ({ onLoginSuccess }) => {
     <div className='container'>
       <div className='header'>
         <div className="text">{isLogin?'Login':'Sign Up'}</div>
-        <div className="underline">
-        </div>
+        <div className="underline"></div>
         <div className="dont-have-login">{isLogin ? "Don't have a login? " : "Already have a login? "}
             <span onClick={() => setIsLogin(!isLogin)}>{isLogin ? "Click here!": "Back to Login"}</span>
         </div>
