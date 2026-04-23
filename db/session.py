@@ -6,6 +6,8 @@ from core.config import DATA_BASE_URL
 
 from db.user import User
 from db.menu import Category, MenuItem
+from db.order import Order
+from db.order_items import OrderItem
 
 engine = create_engine(DATA_BASE_URL)
 

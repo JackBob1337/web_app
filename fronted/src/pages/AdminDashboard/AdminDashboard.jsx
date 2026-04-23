@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react' 
+import React, { use, useEffect, useState } from 'react' 
 import './AdminDashboard.css'
 import CategoryModal from '../../components/modal/CategoryModal/CategoryModal';
 import ItemModal from '../../components/modal/ItemModal/ItemModal';
@@ -9,6 +9,9 @@ const AdminDashboard = ({ onLogout }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isItemModalOpen, setIsItemModalOpen] = useState(false);
     const [categories, setCategories] = useState([]);
+    const [selectCategoryId, setSelectCategoryId] = useState(null);
+    const [itemsByCategory, setItemsByCategory] = useState({});
+    const [editItemData, setEditItemData] = useState(null);    
 
     const handleCloseModal = () => setIsModalOpen(false);
     const handleOpenModal = () => setIsModalOpen(true);
@@ -56,10 +59,8 @@ const AdminDashboard = ({ onLogout }) => {
                 const response = await fetch(`http://localhost:8000/menu/delete_category/${categoryId}`, {
                     method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({id: categoryId}),
+                    },                
                 });
     
                 const data = await response.json();
@@ -79,6 +80,65 @@ const AdminDashboard = ({ onLogout }) => {
             }
         }
 
+    };
+
+    const handleDeleteItemClick = async (itemId, categoryId) => {
+        const confirmed = window.confirm("Are you sure you want to delete this item?");
+
+        if (confirmed) {
+            try {
+                const token = localStorage.getItem('token');
+
+                const response = await fetch(`http://localhost:8000/menu/delete_item/${itemId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                });
+
+                const data = await response.json();
+
+                if(!response.ok) {
+                    alert(data.message || "Something went wrong. Please try again");
+                    return;
+                }
+
+                setItemsByCategory((prev) => ({
+                    ...prev,
+                    [categoryId]: (prev[categoryId] || []).filter((item) => item.id !== itemId),
+                }));
+
+                await fetchItemsByCategory(categoryId);
+                
+            } catch (error) {
+                console.error('Error deleting item:', error);
+                alert("Network error");
+            }
+        }
+    };
+
+    const fetchItemsByCategory = async (categoryID) => {
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`http://localhost:8000/menu/get_items_by_category/${categoryID}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            
+            if (!response.ok) return;
+
+            const data = await response.json();
+
+            setItemsByCategory((prev) => ({
+                ...prev,
+                [categoryID]: data,
+            }));
+        } catch (error) {
+            console.error('Error fetching items by category:', error);
+            alert("Network error");
+        }
     };
 
     const fetchCategories = async () => {
@@ -101,11 +161,18 @@ const AdminDashboard = ({ onLogout }) => {
             }
 
             setCategories(data);
+            data.forEach(category => fetchItemsByCategory(category.id));
         } catch (error) {
             console.error('Error fetching categories:', error);
             alert("Network error");
         }
     };
+
+    const openEditItem = (item) => {
+        setEditItemData(item);
+        setSelectCategoryId(item.category_id);
+        setIsItemModalOpen(true);
+    }
 
     useEffect(() => {
         fetchCategories();
@@ -126,15 +193,16 @@ const AdminDashboard = ({ onLogout }) => {
             </div>
         </header>
         
-         <div className='categories-list'>
+        <div className='categories-list'>
                 {categories.map((category) => (
                     <div className='category-container' key={category.id}>
 
                         <div className='head-of-block'>
                             <h3 className='category-name'>{category.name}</h3>
 
+
                             <div className='buttons'>
-                                <button className='add-item-button' onClick={() => setIsItemModalOpen(true)}>
+                                <button className='add-item-button' onClick={() => { setEditItemData(null); setIsItemModalOpen(true); setSelectCategoryId(category.id); }}>
                                     <svg width="32" height="32" className='add-item-icon' viewBox='0 0 24 24'>
                                         <path d="M13,12 L17.5,12 C17.7761424,12 18,12.2238576 18,12.5 C18,12.7761424 17.7761424,13 17.5,13 L13,13 L13,17.5 C13,17.7761424 12.7761424,18 12.5,18 C12.2238576,18 12,17.7761424 12,17.5 L12,13 L7.5,13 C7.22385763,13 7,12.7761424 7,12.5 C7,12.2238576 7.22385763,12 7.5,12 L12,12 L12,7.5 C12,7.22385763 12.2238576,7 12.5,7 C12.7761424,7 13,7.22385763 13,7.5 L13,12 Z M5.5,3 C5.77614237,3 6,3.22385763 6,3.5 C6,3.77614237 5.77614237,4 5.5,4 C4.67157288,4 4,4.67157288 4,5.5 C4,5.77614237 3.77614237,6 3.5,6 C3.22385763,6 3,5.77614237 3,5.5 C3,4.11928813 4.11928813,3 5.5,3 Z M19.5,4 C19.2238576,4 19,3.77614237 19,3.5 C19,3.22385763 19.2238576,3 19.5,3 C20.8807119,3 22,4.11928813 22,5.5 L22,5.56155281 C22,5.83769519 21.7761424,6.06155281 21.5,6.06155281 C21.2238576,6.06155281 21,5.83769519 21,5.56155281 L21,5.5 C21,4.67157288 20.3284271,4 19.5,4 Z M3,7.5 C3,7.22385763 3.22385763,7 3.5,7 C3.77614237,7 4,7.22385763 4,7.5 L4,8.5 C4,8.77614237 3.77614237,9 3.5,9 C3.22385763,9 3,8.77614237 3,8.5 L3,7.5 Z M3,10.5 C3,10.2238576 3.22385763,10 3.5,10 C3.77614237,10 4,10.2238576 4,10.5 L4,11.5 C4,11.7761424 3.77614237,12 3.5,12 C3.22385763,12 3,11.7761424 3,11.5 L3,10.5 Z M3,13.5 C3,13.2238576 3.22385763,13 3.5,13 C3.77614237,13 4,13.2238576 4,13.5 L4,14.5 C4,14.7761424 3.77614237,15 3.5,15 C3.22385763,15 3,14.7761424 3,14.5 L3,13.5 Z M3,16.5 C3,16.2238576 3.22385763,16 3.5,16 C3.77614237,16 4,16.2238576 4,16.5 L4,17.5 C4,17.7761424 3.77614237,18 3.5,18 C3.22385763,18 3,17.7761424 3,17.5 L3,16.5 Z M21,7.5 C21,7.22385763 21.2238576,7 21.5,7 C21.7761424,7 22,7.22385763 22,7.5 L22,8.5 C22,8.77614237 21.7761424,9 21.5,9 C21.2238576,9 21,8.77614237 21,8.5 L21,7.5 Z M21,10.5 C21,10.2238576 21.2238576,10 21.5,10 C21.7761424,10 22,10.2238576 22,10.5 L22,11.5 C22,11.7761424 21.7761424,12 21.5,12 C21.2238576,12 21,11.7761424 21,11.5 L21,10.5 Z M21,13.5 C21,13.2238576 21.2238576,13 21.5,13 C21.7761424,13 22,13.2238576 22,13.5 L22,14.5 C22,14.7761424 21.7761424,15 21.5,15 C21.2238576,15 21,14.7761424 21,14.5 L21,13.5 Z M21,16.5 C21,16.2238576 21.2238576,16 21.5,16 C21.7761424,16 22,16.2238576 22,16.5 L22,17.5 C22,17.7761424 21.7761424,18 21.5,18 C21.2238576,18 21,17.7761424 21,17.5 L21,16.5 Z M3,19.5 C3,19.2238576 3.22385763,19 3.5,19 C3.77614237,19 4,19.2238576 4,19.5 C4,20.3284271 4.67157288,21 5.5,21 C5.77614237,21 6,21.2238576 6,21.5 C6,21.7761424 5.77614237,22 5.5,22 C4.11928813,22 3,20.8807119 3,19.5 Z M7.5,4 C7.22385763,4 7,3.77614237 7,3.5 C7,3.22385763 7.22385763,3 7.5,3 L8.5,3 C8.77614237,3 9,3.22385763 9,3.5 C9,3.77614237 8.77614237,4 8.5,4 L7.5,4 Z M10.5,4 C10.2238576,4 10,3.77614237 10,3.5 C10,3.22385763 10.2238576,3 10.5,3 L11.5,3 C11.7761424,3 12,3.22385763 12,3.5 C12,3.77614237 11.7761424,4 11.5,4 L10.5,4 Z M13.5,4 C13.2238576,4 13,3.77614237 13,3.5 C13,3.22385763 13.2238576,3 13.5,3 L14.5,3 C14.7761424,3 15,3.22385763 15,3.5 C15,3.77614237 14.7761424,4 14.5,4 L13.5,4 Z M16.5,4 C16.2238576,4 16,3.77614237 16,3.5 C16,3.22385763 16.2238576,3 16.5,3 L17.5,3 C17.7761424,3 18,3.22385763 18,3.5 C18,3.77614237 17.7761424,4 17.5,4 L16.5,4 Z M7.5,22 C7.22385763,22 7,21.7761424 7,21.5 C7,21.2238576 7.22385763,21 7.5,21 L8.5,21 C8.77614237,21 9,21.2238576 9,21.5 C9,21.7761424 8.77614237,22 8.5,22 L7.5,22 Z M10.5,22 C10.2238576,22 10,21.7761424 10,21.5 C10,21.2238576 10.2238576,21 10.5,21 L11.5,21 C11.7761424,21 12,21.2238576 12,21.5 C12,21.7761424 11.7761424,22 11.5,22 L10.5,22 Z M13.5,22 C13.2238576,22 13,21.7761424 13,21.5 C13,21.2238576 13.2238576,21 13.5,21 L14.5,21 C14.7761424,21 15,21.2238576 15,21.5 C15,21.7761424 14.7761424,22 14.5,22 L13.5,22 Z M16.5,22 C16.2238576,22 16,21.7761424 16,21.5 C16,21.2238576 16.2238576,21 16.5,21 L17.5,21 C17.7761424,21 18,21.2238576 18,21.5 C18,21.7761424 17.7761424,22 17.5,22 L16.5,22 Z M19.5,22 C19.2238576,22 19,21.7761424 19,21.5 C19,21.2238576 19.2238576,21 19.5,21 C20.3284271,21 21,20.3284271 21,19.5 C21,19.2238576 21.2238576,19 21.5,19 C21.7761424,19 22,19.2238576 22,19.5 C22,20.8807119 20.8807119,22 19.5,22 Z"/>
                                     </svg>
@@ -154,6 +222,64 @@ const AdminDashboard = ({ onLogout }) => {
                             </div>
 
                         </div>
+                        <div className='items-list'>
+                                {(itemsByCategory[category.id] || []).map(item => (
+                                    <div className='item-card' key={item.id}>
+                                        <div className='item-actions'>
+                                            <button 
+                                                className='edit-item-btn'
+                                                onClick={() => openEditItem(item)}
+                                                aria-label='Edit item'
+                                            >
+                                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <g id="Edit / Edit_Pencil_Line_01">
+                                                    <path id="Vector" d="M4 20.0001H20M4 20.0001V16.0001L12 8.00012M4 20.0001L8 20.0001L16 12.0001M12 8.00012L14.8686 5.13146L14.8704 5.12976C15.2652 4.73488 15.463 4.53709 15.691 4.46301C15.8919 4.39775 16.1082 4.39775 16.3091 4.46301C16.5369 4.53704 16.7345 4.7346 17.1288 5.12892L18.8686 6.86872C19.2646 7.26474 19.4627 7.46284 19.5369 7.69117C19.6022 7.89201 19.6021 8.10835 19.5369 8.3092C19.4628 8.53736 19.265 8.73516 18.8695 9.13061L18.8686 9.13146L16 12.0001M12 8.00012L16 12.0001" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </g>
+                                                </svg>
+                                            </button>
+
+                                            <button 
+                                                className='delete-item-btn'
+                                                onClick={() => handleDeleteItemClick(item.id, category.id)}>
+
+                                                <svg width="32" height="32" className='delete-item-icon' viewBox='0 0 32 32'>
+                                                    <g>
+                                                        <polygon fill="none" points="25,11 7,11 9,31    23,31  "  stroke-linejoin="round" stroke-miterlimit="10" stroke-width="3"/>
+                                                        <line fill="none"  stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="4" x2="28" y1="11" y2="11"/>
+                                                        <line fill="none"  stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="13" x2="13" y1="31" y2="14"/>
+                                                        <line fill="none"  stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="19" x2="19" y1="31" y2="14"/>
+                                                        <polyline fill="none" points="13,11 13,7 19,7    19,11  "  stroke-linejoin="round" stroke-miterlimit="10" stroke-width="3"/>
+                                                    </g>
+                                                </svg>
+                                                
+
+                                            </button>
+                                        </div>
+                                        <img 
+                                            src={`http://localhost:8000${item.image_url}`} 
+                                            alt={item.name} 
+                                            className="item-image" 
+                                        />
+                                        
+                                        <div className='item-info'>
+                                            <div className='item-top-row'>
+                                                <span className='item-name'>{item.name}</span>
+                                                <span className='item-price'>${(item.price_cents / 100).toFixed(2)}</span>
+                                            </div>
+                                            <span className='item-description'>
+                                                {item.description || 'No description'} 
+                                            </span>
+
+
+                                            <div className='item-bottom-row'>
+                                                <span className='item-stock'>Amount: {item.stock}</span>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                ))}
+                        </div>
 
 
                     </div>
@@ -169,6 +295,10 @@ const AdminDashboard = ({ onLogout }) => {
         <ItemModal
             isModalOpen={isItemModalOpen}
             onClose={() => setIsItemModalOpen(false)}
+            categoryID={selectCategoryId}
+            item={editItemData}
+            mode={editItemData ? 'edit' : 'create'}
+            onSubmit={() => fetchItemsByCategory(selectCategoryId)}
         />
 
 

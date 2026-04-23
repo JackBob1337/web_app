@@ -19,7 +19,8 @@ class MenuItem(Base):
     price_cents: Mapped[int] = mapped_column(Integer, nullable=False)
     stock: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     is_available: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-
+    image_url: Mapped[str | None] = mapped_column(String, nullable=True)
+    
     category_id: Mapped[int] = mapped_column(Integer, ForeignKey("categories.id"), nullable=False)
 
     category: Mapped["Category"] = relationship(back_populates="items")

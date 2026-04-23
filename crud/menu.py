@@ -79,6 +79,7 @@ def create_item(db: Session, item_in: MenuItemCreate) -> MenuItemModel | None:
         price_cents = item_in.price_cents,
         stock = item_in.stock,
         is_available = item_in.is_available,
+        image_url = item_in.image_url,
         category_id = item_in.category_id
     )
 

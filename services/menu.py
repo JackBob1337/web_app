@@ -73,7 +73,8 @@ class MenuService:
                     price_cents: int, 
                     stock: int, 
                     is_available: bool, 
-                    category_id: int) -> MenuItemOut:
+                    category_id: int,
+                    image_url: str) -> MenuItemOut:
 
         category = menu_crud.get_category_by_id(self.db, category_id)
         if not category:
@@ -89,7 +90,8 @@ class MenuService:
             price_cents=price_cents,
             stock=stock,
             is_available=is_available,
-            category_id=category_id
+            category_id=category_id,
+            image_url=image_url
         )
 
         item = menu_crud.create_item(self.db, item_in)
@@ -123,7 +125,8 @@ class MenuService:
                     price_cents: int | None = None, 
                     stock: int | None = None, 
                     is_available: bool | None = None, 
-                    category_id: int | None = None) -> MenuItemOut:
+                    category_id: int | None = None,
+                    image_url: str | None = None) -> MenuItemOut:
     
         existing_item = menu_crud.get_item_by_id(self.db, item_id)
         if not existing_item:
@@ -140,7 +143,8 @@ class MenuService:
             price_cents=price_cents,
             stock=stock,
             is_available=is_available,
-            category_id=category_id
+            category_id=category_id,
+            image_url=image_url
         )
 
         item = menu_crud.update_item(self.db, item_id, item_in)

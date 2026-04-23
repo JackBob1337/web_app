@@ -1,0 +1,36 @@
+.user-dashboard .categories-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+}
+
+.user-dashboard .category-container.user {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 14px;
+
+    width: fit-content;
+    max-width: 1200px;
+    min-width: 320px;
+}
+
+.user-dashboard .items-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+
+    width: fit-content;
+    max-width: 100%;
+}
+
+.user-dashboard .item-card {
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.user-dashboard .item-card.item-card-selected {
+    background-color: #d9fdd3;
+    border: 1px solid #22a447;
+}

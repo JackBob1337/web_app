@@ -12,7 +12,7 @@
     flex-direction: column;
     margin: auto;
     width: 600px;
-    height: 370px;
+    height: 500px;
     background: white;
     border-radius: 20px;
 }
@@ -51,6 +51,27 @@
     border-radius: 5px;
     font-size: 18px;
 }
+
+.file-upload {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.file-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.file-input {
+    display: none;
+}
+
+
 
 .modal-button {
     display: flex;

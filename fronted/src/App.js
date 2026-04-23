@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import LoginSignup from './pages/LoginSignup/LoginSignup';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
+import UserDashboard from './pages/UserDashboard/UserDashboard';
 import { useState } from 'react';
 
 function getRoleFromToken(token) {
@@ -42,6 +43,14 @@ function App() {
     return (
       <div>
         <AdminDashboard onLogout={handleLogout}/>
+      </div>
+    );
+  }
+
+  if (role === 'user') { 
+    return (
+      <div>
+        <UserDashboard onLogout={handleLogout}/>
       </div>
     );
   }
