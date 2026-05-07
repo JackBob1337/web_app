@@ -7,9 +7,10 @@ class AddToCartRequest(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class UpdateCartItemRequest(BaseModel):
+    menu_item_id: int
     quantity: int
-
-    model_config = ConfigDict(from_attributes=)
+    
+    model_config = ConfigDict(from_attributes=True)
 
 class CartItemResponse(BaseModel):
     id: int
@@ -18,6 +19,7 @@ class CartItemResponse(BaseModel):
     quantity: int
     unit_price_cents: int
     line_total_cents: int
+    image_url: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
