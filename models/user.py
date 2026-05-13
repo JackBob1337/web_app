@@ -41,12 +41,19 @@ class User_Out(BaseModel):
     id: int
     username: str
     email: EmailStr
-    phone_number: str 
+    phone_number: str | None
+    role: str | None
     class Config:
         from_attributes = True
 
 class User_Login(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=72)
+
+class UserUpdate(BaseModel):
+    username: str| None = None
+    email: EmailStr | None = None
+    phone_number: str | None = None
+
 
 

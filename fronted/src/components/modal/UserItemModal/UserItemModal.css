@@ -1,0 +1,118 @@
+.user-item-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+
+.user-item-modal {
+  width: min(92vw, 420px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--shadow-md);
+}
+
+.item-modal-name-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+.qty-step-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+}
+
+.qty-step-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.qty-step-value {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.qty-trigger {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.qty-trigger:hover {
+  background: var(--surface-3);
+}
+
+.modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 24px;
+    width: 100%;
+}
+
+.qty-row {
+    margin: 0;
+    flex: 0 0 auto;
+}
+
+.add-to-cart-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    margin-left: auto;
+    flex: 0 0 auto;
+    min-width: 180px;
+    height: 42px;
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--accent-contrast);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.add-to-cart-btn:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.add-to-cart-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-price {
+  font-weight: 700;
+}

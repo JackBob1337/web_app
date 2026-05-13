@@ -87,3 +87,17 @@ def place_order(user_id: int, db: Session = Depends(get_db)) -> PlaceOrderRespon
     except ValidationError as e:
         logger.warning("Validation error while placing order for user ID: %s - %s", user_id, str(e))
         raise HTTPException(status_code=400, detail=str(e))
+    
+
+@router.delete("/clear-cart", response_model=CartResponse)
+def clear_cart(user_id: int, db: Session = Depends(get_db)) -> CartResponse:
+    service = CartService(db)
+
+    try:
+        response = service.clear_cart(user_id)
+        logger.info("Cleared cart for user ID: %s", user_id)
+        return response
+    
+    except NotFoundError as e:
+        logger.warning("Failed to clear cart for user ID: %s - %s", user_id, str(e))
+        raise HTTPException(status_code=404, detail=str(e))

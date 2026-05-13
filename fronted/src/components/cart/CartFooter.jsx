@@ -4,7 +4,6 @@ import ConfirmOrderButton from './ConfirmOrderButton'
 const CartFooter = ( { cartTotalCents, onConfirm, disabled, loading} ) => {
   return (
     <div className="cart-footer">
-        <div className='underline'></div>
             <div className="cart-total-row">
                 <span className='cart-total-label'>Total: </span>
                 <span className='cart-total-value'>${(cartTotalCents / 100).toFixed(2)}</span>
@@ -13,8 +12,8 @@ const CartFooter = ( { cartTotalCents, onConfirm, disabled, loading} ) => {
                     loading={loading}
                     onClick={onConfirm}
                 />
-            </div>
         </div>
+    </div>
   )
 };
 

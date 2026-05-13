@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+import db
 from db.session import get_db
 from core.dependencies import get_current_user
 from services.user import UserService
 import logging
-from models.user import User_Out
+from models.user import User_Out, UserUpdate
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/users", tags=["users"])
-
 
 @router.post("/{user_id}/make-admin")
 def make_admin(user_id: int, 
@@ -33,4 +33,32 @@ def make_admin(user_id: int,
 
 @router.get("/me", response_model=User_Out)
 def get_current_user_info(current_user = Depends(get_current_user)):
-    return {"id": current_user.id, "username": current_user.username, "email": current_user.email, "role": current_user.role}
+    return {
+        "id": current_user.id, 
+        "username": current_user.username, 
+        "email": current_user.email,
+        "phone_number": current_user.phone_number, 
+        "role": current_user.role}
+
+@router.patch("/me", response_model=UserUpdate)
+def update_user_profile(user_in: UserUpdate,
+                        db: Session = Depends(get_db),
+                        current_user = Depends(get_current_user)):
+    user_id = current_user.id
+    if current_user.id != user_id:
+        logger.warning("Unauthorized attempt to update profile by user ID: %s for user ID: %s", 
+                       current_user.id, user_id)
+        raise HTTPException(status_code=403, detail="You can only update your own profile")
+    
+    service = UserService(db)
+
+    try:
+        updated_user = service.update_user_profile(user_id, user_in)
+        logger.info("User ID %s updated their profile", user_id)
+        return updated_user
+    
+    except HTTPException as e:
+        if e.status_code == 404:
+            logger.warning("Attempt to update profile for non-existent user ID: %s by user ID: %s", 
+                           user_id, current_user.id)
+        raise HTTPException(status_code=e.status_code, detail=e.detail)

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from db.user import User as UserModel
-from models.user import User_Create
+from models.user import User_Create, UserUpdate
 from core.security import hash_password
 
 def get_user_by_email(db: Session, email: str) -> UserModel | None:
@@ -11,6 +11,9 @@ def get_user_by_username(db: Session, username: str) -> UserModel | None:
 
 def get_user_by_id(db: Session, user_id: int) -> UserModel | None:
     return db.query(UserModel).filter(UserModel.id == user_id).first()
+
+def get_user_by_phone_number(db: Session, phone_number: str) -> UserModel | None:
+    return db.query(UserModel).filter(UserModel.phone_number == phone_number).first()
 
 def create_user(db: Session, user_in: User_Create) -> UserModel:
     user = UserModel(
@@ -32,6 +35,16 @@ def set_admin_role(db: Session, user_id: int) -> UserModel | None:
         return None
         
     user.role = "admin"
+    db.commit()
+    db.refresh(user)
+    return user
+
+def update_user_profile(db: Session, user: UserModel, user_in: UserUpdate) -> UserModel | None:
+    update_data = user_in.model_dump(exclude_unset=True, exclude_none=True)
+
+    for key in update_data:
+        setattr(user, key, update_data[key])
+    
     db.commit()
     db.refresh(user)
     return user

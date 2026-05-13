@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
-from models.user import User_Create
+from models.user import User_Create, UserUpdate
 from fastapi import HTTPException
 from core.security import verify_password
 
-from crud.user import create_user, get_user_by_email, get_user_by_username, get_user_by_id, set_admin_role
+from crud.user import create_user, get_user_by_email, get_user_by_phone_number, get_user_by_username, get_user_by_id, set_admin_role, update_user_profile
 
 
 class UserService:
@@ -47,6 +47,29 @@ class UserService:
             raise HTTPException(status_code=500, detail="Failed to update user role")
                 
         return update_user
+    
+    def update_user_profile(self, user_id: int, user_in: UserUpdate):
+        user = get_user_by_id(self.db, user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        if user_in.email and user_in.email != user.email:
+           existing_email = get_user_by_email(self.db, user_in.email)
+           if existing_email:
+               raise HTTPException(status_code=400, detail="Email already exists")
+
+        if user_in.username and user_in.username != user.username:
+            existing_username = get_user_by_username(self.db, user_in.username)
+            if existing_username:
+                raise HTTPException(status_code=400, detail="Username already exists")
+
+        if user_in.phone_number and user_in.phone_number != user.phone_number:
+            existing_phone = get_user_by_phone_number(self.db, user_in.phone_number)
+            if existing_phone:
+                raise HTTPException(status_code=400, detail="Phone number already exists")
+
+        return update_user_profile(self.db, user, user_in)
+
 
 
         

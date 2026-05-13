@@ -1,5 +1,8 @@
 import logo from './logo.svg';
 
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import './App.css';
 import LoginSignup from './pages/LoginSignup/LoginSignup';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
@@ -34,15 +37,16 @@ function App() {
     setRole(userRole);
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
+  const handleAfterLogout = () => {
     setRole(null);
   }
+
  
   if (role === 'admin' || role === 'super_admin') {
     return (
       <div>
-        <AdminDashboard onLogout={handleLogout}/>
+        <AdminDashboard onLogout={handleAfterLogout}/>
+        <ToastContainer />
       </div>
     );
   }
@@ -50,7 +54,8 @@ function App() {
   if (role === 'user') { 
     return (
       <div>
-        <UserDashboard onLogout={handleLogout}/>
+        <UserDashboard onLogout={handleAfterLogout}/>
+        <ToastContainer />
       </div>
     );
   }
@@ -58,6 +63,7 @@ function App() {
   return (
     <div>
       <LoginSignup onLoginSuccess={handleLoginSuccess}/>
+      <ToastContainer />
     </div>
   );
 }
