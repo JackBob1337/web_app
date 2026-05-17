@@ -37,7 +37,13 @@ const CartModal = ({
     }, []);
 
     return (
-    <div className='cart-modal-overlay' onClick={onClose}>
+    <motion.div className='cart-modal-overlay' 
+        onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+    >
         <motion.div 
             className="cart"
             id="cart"
@@ -101,7 +107,7 @@ const CartModal = ({
                 
             </div>
         </motion.div>
-    </div>
+    </motion.div>
   )
 }
 

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models.orders import AddToCartRequest, CartItemResponse, UpdateCartItemRequest, CartResponse, PlaceOrderResponse
+from models.orders import AddToCartRequest, CartItemResponse, UpdateCartItemRequest, CartResponse, PlaceOrderResponse, OrderHistoryResponse
 import crud.cart as cart_crud
 from services.domain_errors import NotFoundError, ValidationError, ConflictError
 
@@ -73,5 +73,8 @@ class CartService:
             raise NotFoundError("Cart not found")
         
         return cart_response
+    
+    def get_order_history(self, user_id: int) -> list[OrderHistoryResponse]:
+        return cart_crud.get_orders_by_user(self.db, user_id)
     
 

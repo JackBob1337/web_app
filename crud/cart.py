@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from db.order import Order as OrderModel
 from db.order_items import OrderItem as OrderItemModel
-from models.orders import AddToCartRequest, CartItemResponse, UpdateCartItemRequest, CartResponse, PlaceOrderResponse
+from models.orders import AddToCartRequest, CartItemResponse, UpdateCartItemRequest, CartResponse, PlaceOrderResponse, OrderHistoryResponse, OrderHistoryItem
 from db.menu import MenuItem as MenuItemModel
 
 def create_cart(db: Session, user_id: int) -> OrderModel:
@@ -242,3 +242,27 @@ def clear_cart(db: Session, user_id: int) -> CartResponse | None:
     db.refresh(cart)
     
     return CartResponse(status=cart.status, items=[], total_price_cents=0)
+
+def get_orders_by_user(db: Session, user_id: int) -> list[OrderHistoryResponse]:
+    orders = db.query(OrderModel).filter(OrderModel.user_id == user_id, OrderModel.status != "cart").order_by(OrderModel.created_at.desc()).all()
+
+    if not orders:
+        return []
+
+    return [
+        OrderHistoryResponse(
+            order_id=order.id,
+            items=[
+                OrderHistoryItem(
+                    order_id=item.order_id,
+                    product_name=item.menu_item.name,
+                    quantity=item.quantity,
+                    price_cents=item.price_cents_snapshot
+                ) for item in order.items
+            ],
+            total_price_cents=order.total_price_cents,
+            created_at=order.created_at.isoformat(),
+            status=order.status
+        ) for order in orders
+    ]
+    

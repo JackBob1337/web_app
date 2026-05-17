@@ -1,10 +1,7 @@
-import logo from './logo.svg';
-
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import './App.css';
-import LoginSignup from './pages/LoginSignup/LoginSignup';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import UserDashboard from './pages/UserDashboard/UserDashboard';
 import { useState } from 'react';
@@ -31,7 +28,6 @@ function App() {
     return getRoleFromToken(token);
   });
   
-
   const handleLoginSuccess = (token) => {
     const userRole = getRoleFromToken(token);
     setRole(userRole);
@@ -42,28 +38,24 @@ function App() {
   }
 
  
+ 
   if (role === 'admin' || role === 'super_admin') {
     return (
       <div>
         <AdminDashboard onLogout={handleAfterLogout}/>
-        <ToastContainer />
-      </div>
-    );
-  }
-
-  if (role === 'user') { 
-    return (
-      <div>
-        <UserDashboard onLogout={handleAfterLogout}/>
-        <ToastContainer />
+        <ToastContainer theme="dark" />
       </div>
     );
   }
 
   return (
     <div>
-      <LoginSignup onLoginSuccess={handleLoginSuccess}/>
-      <ToastContainer />
+      <UserDashboard
+        onLogout={handleAfterLogout}
+        onLoginSuccess={handleLoginSuccess}
+        isLoggedIn={!!role}
+      />
+      <ToastContainer theme="dark" />
     </div>
   );
 }

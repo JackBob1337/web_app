@@ -44,8 +44,9 @@ const useProfile = () => {
   };
 
   useEffect(() => {
-    fetchUserInfo();
-  }, []);
+    const token = getAuthToken();
+    if (token) fetchUserInfo();
+}, []);
 
   return { userInfo, loading, error, refetch: fetchUserInfo };
 };

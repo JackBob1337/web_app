@@ -5,7 +5,7 @@
     background-color: var(--background);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 20px;
+    padding: 14px;
     position: relative;
 }
 
@@ -41,3 +41,12 @@
 .logout-btn {
     margin-top: auto;
 }
+
+.orders-card {
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    overflow-y: auto;
+    flex: 1;
+}   

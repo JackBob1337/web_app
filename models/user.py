@@ -55,5 +55,23 @@ class UserUpdate(BaseModel):
     email: EmailStr | None = None
     phone_number: str | None = None
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str =  Field(min_length=8, max_length=72)
+    new_password: str =  Field(min_length=8, max_length=72)
+
+    @field_validator("new_password")
+    @classmethod
+    def strong_password(cls, value: str) -> str:
+        if not any(char.isdigit() for char in value):
+            raise ValueError("Password must contain at least one digit")
+        
+        if not any(char.isupper() for char in value):
+            raise ValueError("Password must contain at least one uppercase letter")
+        
+        if not any(char.islower() for char in value):
+            raise ValueError("Password must contain at least one lowercase letter")
+
+        return value
+
 
 

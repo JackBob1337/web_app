@@ -1,23 +1,21 @@
-import React, {useState, useEffect, useRef} from 'react'
-import { motion, AnimatePresence} from 'framer-motion';
-import { getUserIdFromToken, getAuthToken } from '../../utils/auth';
+import React, {useState, useEffect} from 'react'
+import { AnimatePresence} from 'framer-motion';
 
 import useCatalog from '../../hooks/useCatalog';
 import useCart from '../../hooks/useCart';
 import useProfile from '../../hooks/useProfile';
+import useOrders from '../../hooks/useOrders';
 
 import CategorySection from '../../components/categories/CategorySection';
-
 import UserCard  from '../../components/user_info/UserCard';
-
-import ItemCard from '../../components/categories/ItemCard';
+import AuthSidebar from '../../components/user_info/AuthSidebar';
 import CartModal from '../../components/cart/CartModal';
 import CartButton from '../../components/cart/CartButton';
 import UserItemModal from '../../components/modal/UserItemModal/UserItemModal';
 
 import './UserDashboard.css';
 
-const UserDashboard = ({ onLogout }) => {
+const UserDashboard = ({ onLogout, onLoginSuccess, isLoggedIn }) => {
     const closeItemModal = () => {
         setIsItemModalOpen(false);
         setActiveItem(null);
@@ -28,6 +26,7 @@ const UserDashboard = ({ onLogout }) => {
         setIsItemModalOpen(true);
     };
 
+    const { orders, loading, error: ordersError, fetchOrders } = useOrders();
     const { categories, itemsByCategory } = useCatalog();
     const {
         isCartOpen,
@@ -37,38 +36,59 @@ const UserDashboard = ({ onLogout }) => {
         cartItems,
         cartItemsCount,
         cartTotalCents,
-        openQtyItemId,
-        setOpenQtyItemId,
         fetchCartItems,
         handleAddToCart,
         handleCartQtyClick,
         handleRemoveFromCart,
         handleClearCart,
         handleConfirmedOrder,
+        resetCart, 
     } = useCart({
         onAddedToCart: closeItemModal,
+        onOrderPlaced: fetchOrders,
     });
 
-    const { userInfo, refetch } = useProfile();
-
+    const { userInfo, refetch: refetchProfile } = useProfile();
+    
     const [isItemModalOpen, setIsItemModalOpen] = useState(false);
     const [activeItem, setActiveItem] = useState(null);
 
-    useEffect(() => {
+    const handleLoginSuccessInDashboard = (token) => {
+        onLoginSuccess(token);
+        setTimeout(() => {
+            refetchProfile();
             fetchCartItems();
-        }, []);
+            fetchOrders();
+        }, 100);
+    };
+    const handleLogout = () => {
+        resetCart();
+        onLogout();
+    };
+
+    useEffect(() => {
+        fetchCartItems();
+        fetchOrders();
+    }, []);
 
   return (
     <div className='user-dashboard'>
             
         <div className="dashboard-layout">
 
-            <div className='user-sidebar'>
-                <UserCard
-                    userInfo={userInfo}
-                    refetch={refetch}
-                    onLogout={onLogout}
-                />
+            <div className="user-sidebar">
+                {isLoggedIn ? (
+                    <UserCard
+                        userInfo={userInfo}
+                        refetch={refetchProfile}
+                        onLogout={handleLogout}
+                        orders={orders}
+                        ordersLoading={loading}
+                        ordersError={ordersError}
+                    />
+                ) : (
+                    <AuthSidebar onLoginSuccess={handleLoginSuccessInDashboard} />
+                )}
             </div>
             
             <div className='categories-list'>
@@ -82,20 +102,22 @@ const UserDashboard = ({ onLogout }) => {
                     />
                 ))}
 
-                {isItemModalOpen && activeItem && (
-                    <UserItemModal
-                        isOpen={isItemModalOpen}
-                        onClose={() => setIsItemModalOpen(false)}
-                        item={activeItem}
-                        onAddToCart={handleAddToCart}
-                        addingToCart={addingToCart}
-                    />
-                )}
+                <AnimatePresence>
+                    {isItemModalOpen && activeItem && (
+                        <UserItemModal
+                            isOpen={isItemModalOpen}
+                            onClose={() => setIsItemModalOpen(false)}
+                            item={activeItem}
+                            onAddToCart={handleAddToCart}
+                            addingToCart={addingToCart}
+                        />
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* Cart */} 
             <AnimatePresence>
-                {!isCartOpen && (
+                {isLoggedIn && !isCartOpen && (
                     <CartButton
                         cartItemsCount={cartItemsCount}
                         onOpen={() => setIsCartOpen(true)}
@@ -104,7 +126,7 @@ const UserDashboard = ({ onLogout }) => {
             </AnimatePresence>
             
             <AnimatePresence>
-                {isCartOpen && (
+                {isLoggedIn && isCartOpen && (
                     <CartModal
                         isOpen={isCartOpen}
                         onClose={() => setIsCartOpen(false)}

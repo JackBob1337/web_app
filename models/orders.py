@@ -35,3 +35,20 @@ class PlaceOrderResponse(BaseModel):
     order_id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+class OrderHistoryItem(BaseModel):
+    order_id: int
+    product_name: str
+    quantity: int
+    price_cents: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+class OrderHistoryResponse(BaseModel):
+    order_id: int
+    items: list[OrderHistoryItem]
+    total_price_cents: int
+    created_at: str
+    status: str
+
+    model_config = ConfigDict(from_attributes=True)

@@ -1,16 +1,19 @@
 
 .user-dashboard {
-  min-height: 100vh;
-  background: var(--bg-soft-gradient);
+    margin-top: 0;
+    min-height: 100vh;
+    background: var(--bg-soft-gradient);
 }
 
 .dashboard-layout {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     justify-content: space-between;
     gap: 32px;
     height: 100vh;
     overflow: hidden;
+    padding: 16px;
+    box-sizing: border-box;
 }
 
 .logout-btn {
@@ -25,13 +28,15 @@
 
 .user-sidebar {
     width: 360px;
-    height: 100vh;
     display: flex;
     flex-direction: column;
-    border-radius: 12px;
     gap: 16px;
     padding: 10px;
     background: var(--surface);
     box-shadow: 0 14px 40px rgba(0,0,0,0.45);
     border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import './UserItemModal.css';
 
 const UserItemModal = ({ isOpen, onClose, item, onAddToCart, addingToCart }) => {
@@ -23,8 +23,22 @@ const UserItemModal = ({ isOpen, onClose, item, onAddToCart, addingToCart }) => 
   };
 
   return (
-    <div className="user-item-modal-overlay" onClick={onClose}>
-      <div className="user-item-modal" onClick={(e) => e.stopPropagation()}>
+    <motion.div 
+        className="user-item-modal-overlay" 
+        onClick={onClose}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+    >
+      <motion.div   
+        className="user-item-modal"
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, y: 40, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 40, scale: 0.95 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+      >
         <img 
             src={`http://localhost:8000${item.image_url}`} 
             alt={item.name} 
@@ -78,10 +92,10 @@ const UserItemModal = ({ isOpen, onClose, item, onAddToCart, addingToCart }) => 
             </div>
 
             <button
-            type="button"
-            onClick={handleAdd}
-            disabled={addingToCart}
-            className="add-to-cart-btn"
+              type="button"
+              onClick={handleAdd}
+              disabled={addingToCart}
+              className="add-to-cart-btn"
             >
             {addingToCart ? (
                 'Adding...'       
@@ -93,8 +107,8 @@ const UserItemModal = ({ isOpen, onClose, item, onAddToCart, addingToCart }) => 
             )}
             </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

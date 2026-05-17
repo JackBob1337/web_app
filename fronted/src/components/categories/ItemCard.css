@@ -1,11 +1,13 @@
 .item-card {
+    width: 100%;
+    box-sizing: border-box;
     cursor: pointer;
     background: var(--surface-2);
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     border: 1px solid var(--border);
     color: var(--text);
     border-radius: 12px;
-    padding: 12px;
+    padding: 12px; 
     transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 

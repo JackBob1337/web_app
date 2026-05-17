@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
 import { getAuthToken, getUserIdFromToken } from '../utils/auth';
 
-const useCart = ({ onAddedToCart }) => {
+const useCart = ({ onAddedToCart, onOrderPlaced}) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -20,19 +21,19 @@ const useCart = ({ onAddedToCart }) => {
     if (!userId || !token) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/cart/cart-items?user_id=${userId}`, {
+      const response = await fetch(`http://localhost:8000/cart/cart-items`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();
       if (!response.ok) {
-        alert(data.detail || 'Could not fetch cart items');
+        toast.error(data.detail || 'Could not fetch cart items');
         return;
       }
 
       setCartItems(Array.isArray(data.items) ? [...data.items].sort((a, b) => a.id - b.id) : []);
     } catch {
-      alert('Network error');
+      toast.error('Network error');
     }
   };
 
@@ -42,18 +43,18 @@ const useCart = ({ onAddedToCart }) => {
     const userId = getUserIdFromToken();
     const token = getAuthToken();
     if (!userId || !token) {
-      alert('User not authenticated');
+      toast.error('User not authenticated');
       return;
     }
     if (qty < 1) {
-      alert('Quantity must be at least 1');
+      toast.error('Quantity must be at least 1');
       return;
     }
 
     try {
       setAddingToCart(true);
 
-      const response = await fetch(`http://localhost:8000/cart/add-item?user_id=${userId}`, {
+      const response = await fetch(`http://localhost:8000/cart/add-item`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,14 +68,14 @@ const useCart = ({ onAddedToCart }) => {
 
       const data = await response.json();
       if (!response.ok) {
-        alert(data.detail || 'Failed to add item to cart');
+        toast.error(data.detail || 'Failed to add item to cart');
         return;
       }
 
       await fetchCartItems();
       if (onAddedToCart) onAddedToCart();
     } catch {
-      alert('Network error');
+      toast.error('Network error');
     } finally {
       setAddingToCart(false);
     }
@@ -98,7 +99,7 @@ const useCart = ({ onAddedToCart }) => {
     );
 
     try {
-      const response = await fetch(`http://localhost:8000/cart/update-item?user_id=${userId}`, {
+      const response = await fetch(`http://localhost:8000/cart/update-item`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +116,7 @@ const useCart = ({ onAddedToCart }) => {
 
       setCartItems(Array.isArray(data.items) ? [...data.items].sort((a, b) => a.id - b.id) : []);
     } catch {
-      alert('Network error');
+      toast.error('Network error');
       await fetchCartItems();
     }
   };
@@ -130,7 +131,7 @@ const useCart = ({ onAddedToCart }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/cart/remove-item?user_id=${userId}&menu_item_id=${item.menu_item_id}`,
+        `http://localhost:8000/cart/remove-item?menu_item_id=${item.menu_item_id}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
@@ -142,6 +143,7 @@ const useCart = ({ onAddedToCart }) => {
 
       setCartItems(Array.isArray(data.items) ? [...data.items].sort((a, b) => a.id - b.id) : []);
     } catch {
+      toast.error('Network error');
       await fetchCartItems();
     }
   };
@@ -152,21 +154,21 @@ const useCart = ({ onAddedToCart }) => {
     if (!userId || !token) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/cart/clear-cart?user_id=${userId}`, {
+      const response = await fetch(`http://localhost:8000/cart/clear-cart`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();
       if (!response.ok) {
-        alert(data.detail || 'Failed to clear cart');
+        toast.error(data.detail || 'Failed to clear cart');
         return;
       }
 
       setCartItems(Array.isArray(data.items) ? data.items : []);
       setOpenQtyItemId(null);
     } catch {
-      alert('Network error');
+      toast.error('Network error');
     }
   };
 
@@ -178,25 +180,32 @@ const useCart = ({ onAddedToCart }) => {
     try {
       setPlacingOrder(true);
 
-      const response = await fetch(`http://localhost:8000/cart/place-order?user_id=${userId}`, {
+      const response = await fetch(`http://localhost:8000/cart/place-order`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await response.json();
       if (!response.ok) {
-        alert(data.detail || 'Failed to place order');
+        toast.error(data.detail || 'Failed to place order');
         return;
       }
 
       setCartItems([]);
       setIsCartOpen(false);
-      alert('Order placed successfully!');
+      toast.success('Order placed successfully!');
+
+      if (onOrderPlaced) onOrderPlaced();
     } catch {
-      alert('Network error');
+      toast.error('Network error');
     } finally {
       setPlacingOrder(false);
     }
+  };
+
+  const resetCart = () => {
+      setCartItems([]);
+      setIsCartOpen(false);
   };
 
   return {
@@ -215,6 +224,7 @@ const useCart = ({ onAddedToCart }) => {
     handleRemoveFromCart,
     handleClearCart,
     handleConfirmedOrder,
+    resetCart,
   };
 };
 

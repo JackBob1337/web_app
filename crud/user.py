@@ -48,3 +48,9 @@ def update_user_profile(db: Session, user: UserModel, user_in: UserUpdate) -> Us
     db.commit()
     db.refresh(user)
     return user
+
+def update_user_password(db: Session, user: UserModel, new_hashed_password: str) -> UserModel | None:
+    user.hashed_password = new_hashed_password
+    db.commit()
+    db.refresh(user)
+    return user

@@ -1,9 +1,8 @@
 from sqlalchemy.orm import Session
 from models.user import User_Create, UserUpdate
 from fastapi import HTTPException
-from core.security import verify_password
-
-from crud.user import create_user, get_user_by_email, get_user_by_phone_number, get_user_by_username, get_user_by_id, set_admin_role, update_user_profile
+from core.security import verify_password, hash_password
+from crud.user import create_user, get_user_by_email, get_user_by_phone_number, get_user_by_username, get_user_by_id, set_admin_role, update_user_profile, update_user_password
 
 
 class UserService:
@@ -69,6 +68,14 @@ class UserService:
                 raise HTTPException(status_code=400, detail="Phone number already exists")
 
         return update_user_profile(self.db, user, user_in)
+    
+    def update_user_password(self, user, old_password: str, new_password: str):
+        if not verify_password(old_password, user.hashed_password):
+            raise HTTPException(status_code=400, detail="Current password is incorrect")
+        
+        new_hashed_pwd = hash_password(new_password)
+
+        return update_user_password(self.db, user, new_hashed_pwd)
 
 
 
