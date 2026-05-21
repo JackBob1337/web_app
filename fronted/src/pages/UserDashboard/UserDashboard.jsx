@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import { AnimatePresence} from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 import useCatalog from '../../hooks/useCatalog';
 import useCart from '../../hooks/useCart';
@@ -16,6 +17,8 @@ import UserItemModal from '../../components/modal/UserItemModal/UserItemModal';
 import './UserDashboard.css';
 
 const UserDashboard = ({ onLogout, onLoginSuccess, isLoggedIn }) => {
+    const navigate = useNavigate();
+
     const closeItemModal = () => {
         setIsItemModalOpen(false);
         setActiveItem(null);
@@ -43,6 +46,7 @@ const UserDashboard = ({ onLogout, onLoginSuccess, isLoggedIn }) => {
         handleClearCart,
         handleConfirmedOrder,
         resetCart, 
+        migrateGuestCartToUser,
     } = useCart({
         onAddedToCart: closeItemModal,
         onOrderPlaced: fetchOrders,
@@ -53,13 +57,18 @@ const UserDashboard = ({ onLogout, onLoginSuccess, isLoggedIn }) => {
     const [isItemModalOpen, setIsItemModalOpen] = useState(false);
     const [activeItem, setActiveItem] = useState(null);
 
-    const handleLoginSuccessInDashboard = (token) => {
+    const handleAuthSuccess = async (token) => {
+        localStorage.setItem('token', token);
+
         onLoginSuccess(token);
-        setTimeout(() => {
-            refetchProfile();
-            fetchCartItems();
-            fetchOrders();
-        }, 100);
+
+        await migrateGuestCartToUser(token);
+
+        await refetchProfile();
+        await fetchCartItems();
+        await fetchOrders();
+
+        navigate('/profile');
     };
     const handleLogout = () => {
         resetCart();
@@ -73,9 +82,7 @@ const UserDashboard = ({ onLogout, onLoginSuccess, isLoggedIn }) => {
 
   return (
     <div className='user-dashboard'>
-            
         <div className="dashboard-layout">
-
             <div className="user-sidebar">
                 {isLoggedIn ? (
                     <UserCard
@@ -87,7 +94,10 @@ const UserDashboard = ({ onLogout, onLoginSuccess, isLoggedIn }) => {
                         ordersError={ordersError}
                     />
                 ) : (
-                    <AuthSidebar onLoginSuccess={handleLoginSuccessInDashboard} />
+                    <AuthSidebar
+                        onLoginSuccess={handleAuthSuccess}
+                        onRegisterSuccess={handleAuthSuccess}
+                    />
                 )}
             </div>
             
@@ -117,7 +127,7 @@ const UserDashboard = ({ onLogout, onLoginSuccess, isLoggedIn }) => {
 
             {/* Cart */} 
             <AnimatePresence>
-                {isLoggedIn && !isCartOpen && (
+                {!isCartOpen && (
                     <CartButton
                         cartItemsCount={cartItemsCount}
                         onOpen={() => setIsCartOpen(true)}
@@ -126,7 +136,7 @@ const UserDashboard = ({ onLogout, onLoginSuccess, isLoggedIn }) => {
             </AnimatePresence>
             
             <AnimatePresence>
-                {isLoggedIn && isCartOpen && (
+                {isCartOpen && (
                     <CartModal
                         isOpen={isCartOpen}
                         onClose={() => setIsCartOpen(false)}

@@ -1,8 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { updateCartItemQuantity, removeItemFromCart } from '../utils/cart.js';
 import { toast } from 'react-toastify';
 import { getAuthToken, getUserIdFromToken } from '../utils/auth';
 
-const useCart = ({ onAddedToCart, onOrderPlaced}) => {
+const GUEST_CART_KEY = 'guest_cart';
+
+const useCart = ({ onAddedToCart, onOrderPlaced} = {}) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
   const [placingOrder, setPlacingOrder] = useState(false);
@@ -37,17 +40,54 @@ const useCart = ({ onAddedToCart, onOrderPlaced}) => {
     }
   };
 
+  useEffect(() => {
+    const token = getAuthToken();
+    if (!token) {
+      const guestCart = localStorage.getItem(GUEST_CART_KEY);
+      setCartItems(guestCart ? JSON.parse(guestCart) : []);
+    } else {
+      fetchCartItems();
+    }
+  }, []);
+
+  useEffect(() => {
+    const token = getAuthToken();
+    if(!token) {
+      localStorage.setItem(GUEST_CART_KEY, JSON.stringify(cartItems));
+    }
+  }, [cartItems]);
+
+
   const handleAddToCart = async (item, qty) => {
     if (!item) return;
 
     const userId = getUserIdFromToken();
     const token = getAuthToken();
+
     if (!userId || !token) {
-      toast.error('User not authenticated');
-      return;
-    }
-    if (qty < 1) {
-      toast.error('Quantity must be at least 1');
+      setCartItems((prev) => {
+        const exists = prev.find((ci) => ci.id === item.id);
+        let newCart;
+        if(exists) {
+          newCart = prev.map(ci => 
+            ci.id === item.id
+              ? {...ci, quantity: ci.quantity + qty, line_total_cents: (ci.quantity + qty) * ci.unit_price_cents }
+              : ci
+          );
+        } else {
+          newCart = [
+            ...prev,
+            {
+              ...item,
+              quantity: qty,
+              line_total_cents: qty * item.unit_price_cents,
+            },
+          ];
+        }
+        localStorage.setItem(GUEST_CART_KEY, JSON.stringify(newCart));
+        return newCart;
+      });
+      if (onAddedToCart) onAddedToCart();
       return;
     }
 
@@ -82,21 +122,15 @@ const useCart = ({ onAddedToCart, onOrderPlaced}) => {
   };
 
   const handleCartQtyClick = async (item, delta) => {
-    const userId = getUserIdFromToken();
-    const token = getAuthToken();
-    if (!userId || !token) return;
-
     const nextQty = Math.max(0, item.quantity + delta);
+    const token = getAuthToken();
 
-    setCartItems((prev) =>
-      prev
-        .map((ci) =>
-          ci.id === item.id
-            ? { ...ci, quantity: nextQty, line_total_cents: nextQty * ci.unit_price_cents }
-            : ci
-        )
-        .filter((ci) => ci.quantity > 0)
-    );
+    if (!token) {
+      setCartItems((prev) =>
+        updateCartItemQuantity(prev, item.id, nextQty)
+      );
+      return;
+    }
 
     try {
       const response = await fetch(`http://localhost:8000/cart/update-item`, {
@@ -113,7 +147,7 @@ const useCart = ({ onAddedToCart, onOrderPlaced}) => {
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.detail || 'Failed to update quantity');
-
+      
       setCartItems(Array.isArray(data.items) ? [...data.items].sort((a, b) => a.id - b.id) : []);
     } catch {
       toast.error('Network error');
@@ -122,11 +156,13 @@ const useCart = ({ onAddedToCart, onOrderPlaced}) => {
   };
 
   const handleRemoveFromCart = async (item) => {
-    const userId = getUserIdFromToken();
     const token = getAuthToken();
-    if (!userId || !token) return;
-
-    setCartItems((prev) => prev.filter((ci) => ci.id !== item.id));
+    if (!token) {
+      setCartItems((prev) => removeItemFromCart(prev, item.id));
+      setOpenQtyItemId(null);
+      return;
+    };
+    setCartItems((prev) => removeItemFromCart(prev, item.id));
     setOpenQtyItemId(null);
 
     try {
@@ -149,9 +185,13 @@ const useCart = ({ onAddedToCart, onOrderPlaced}) => {
   };
 
   const handleClearCart = async () => {
-    const userId = getUserIdFromToken();
     const token = getAuthToken();
-    if (!userId || !token) return;
+    if (!token) {
+      localStorage.removeItem(GUEST_CART_KEY);
+      setCartItems([]);
+      setOpenQtyItemId(null);
+      return;
+    };
 
     try {
       const response = await fetch(`http://localhost:8000/cart/clear-cart`, {
@@ -173,9 +213,10 @@ const useCart = ({ onAddedToCart, onOrderPlaced}) => {
   };
 
   const handleConfirmedOrder = async () => {
-    const userId = getUserIdFromToken();
     const token = getAuthToken();
-    if (!userId || !token) return;
+    if (!token) {
+      toast.error('You must be logged in to place an order');
+      return};
 
     try {
       setPlacingOrder(true);
@@ -203,6 +244,41 @@ const useCart = ({ onAddedToCart, onOrderPlaced}) => {
     }
   };
 
+  const migrateGuestCartToUser = async (newToken) => {
+  const guestCart = localStorage.getItem(GUEST_CART_KEY);
+
+  if (!guestCart || !newToken) return;
+
+  const items = JSON.parse(guestCart);
+
+  try {
+    for (const item of items) {
+      console.log(item);
+      const response = await fetch(`http://localhost:8000/cart/add-item`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${newToken}`,
+        },
+        body: JSON.stringify({
+          menu_item_id: item.id,
+          quantity: item.quantity,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || 'Failed to migrate cart');
+      }
+    }
+
+    localStorage.removeItem(GUEST_CART_KEY);
+
+  } catch (error) {
+    console.error('Cart migration failed:', error);
+    throw error;
+  }
+};
   const resetCart = () => {
       setCartItems([]);
       setIsCartOpen(false);
@@ -225,6 +301,7 @@ const useCart = ({ onAddedToCart, onOrderPlaced}) => {
     handleClearCart,
     handleConfirmedOrder,
     resetCart,
+    migrateGuestCartToUser,
   };
 };
 

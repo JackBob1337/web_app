@@ -34,6 +34,7 @@ function App() {
   }
 
   const handleAfterLogout = () => {
+    localStorage.removeItem('token');
     setRole(null);
   }
 
