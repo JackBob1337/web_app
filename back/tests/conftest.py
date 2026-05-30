@@ -1,3 +1,5 @@
+import os
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -9,7 +11,7 @@ from main import app
 from back.db.base import Base
 from back.db.session import get_db
 
-TEST_DATABASE_URL = "postgresql+psycopg2://jack_bob:tolik03121999@localhost:5432/User_DB_test"
+TEST_DATABASE_URL = os.getenv("DATA_BASE_URL", "postgresql+psycopg2://testuser:testpassword@localhost:5432/testdb")
 engine = create_engine(TEST_DATABASE_URL)
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
