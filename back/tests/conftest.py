@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 from back.db.menu import Category, MenuItem
 from back.db.user import User as UserModel
 from back.core.security import create_access_token, hash_password
-from back.main import app
+from main import app
 from back.db.base import Base
 from back.db.session import get_db
 
