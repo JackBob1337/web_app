@@ -81,7 +81,7 @@ export default function useItemModalForm({ mode = 'create', item, categoryID, is
             let result;
 
             if (mode === 'edit') {
-                const response = await fetch(`http://localhost:8000/menu/update_item/${item.id}`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/update_item/${item.id}`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ export default function useItemModalForm({ mode = 'create', item, categoryID, is
                 if (formData.image) {
                     const imgData = new FormData();
                     imgData.append('file', formData.image);
-                    const imgRes = await fetch(`http://localhost:8000/menu/upload_item_img/${item.id}`, {
+                    const imgRes = await fetch(`${process.env.REACT_APP_API_URL}/menu/upload_item_img/${item.id}`, {
                         method: 'POST',
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -128,7 +128,7 @@ export default function useItemModalForm({ mode = 'create', item, categoryID, is
                 data.append('is_available', String(formData.is_available));
                 data.append('category_id', String(formData.category_id));
                 data.append('image', formData.image);
-                const response = await fetch('http://localhost:8000/menu/create_item', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/create_item`, {
                     method: 'POST',
                     headers: {
                         Authorization: `Bearer ${token}`,

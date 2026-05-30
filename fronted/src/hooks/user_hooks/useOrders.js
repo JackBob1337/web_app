@@ -19,7 +19,7 @@ const useOrders =() => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8000/cart/orders`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/orders`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

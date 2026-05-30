@@ -18,7 +18,7 @@ const useProfile = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:8000/users/me", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users/me`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

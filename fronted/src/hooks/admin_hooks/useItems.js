@@ -8,7 +8,7 @@ const useItems = () => {
         try {
             const token = localStorage.getItem('token');
 
-            const response = await fetch(`http://localhost:8000/menu/get_items_by_category/${categoryID}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/get_items_by_category/${categoryID}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -35,7 +35,7 @@ const useItems = () => {
             try {
                 const token = localStorage.getItem('token');
 
-                const response = await fetch(`http://localhost:8000/menu/delete_item/${itemId}`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/delete_item/${itemId}`, {
                     method: 'DELETE',
                     headers: {
                         Authorization: `Bearer ${token}`

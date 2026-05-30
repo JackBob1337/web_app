@@ -15,7 +15,7 @@ const useCategories = () => {
         try {
             const token = localStorage.getItem('token');
 
-            const response = await fetch('http://localhost:8000/menu/get_all_categories', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/get_all_categories`, {
                 method: 'GET',
                 headers: {
                 Authorization: `Bearer ${token}`,
@@ -42,7 +42,7 @@ const useCategories = () => {
         try {
             const token = localStorage.getItem('token');
 
-            const response = await fetch('http://localhost:8000/menu/create_category', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/create_category`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ const useCategories = () => {
             try {
                 const token = localStorage.getItem('token');
     
-                const response = await fetch(`http://localhost:8000/menu/delete_category/${categoryId}`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/delete_category/${categoryId}`, {
                     method: 'DELETE',
                     headers: {
                         Authorization: `Bearer ${token}`

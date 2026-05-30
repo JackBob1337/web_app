@@ -24,7 +24,7 @@ const useCart = ({ onAddedToCart, onOrderPlaced} = {}) => {
     if (!userId || !token) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/cart/cart-items`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/cart-items`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -67,11 +67,30 @@ const useCart = ({ onAddedToCart, onOrderPlaced} = {}) => {
     if (!userId || !token) {
       setCartItems((prev) => {
         const exists = prev.find((ci) => ci.id === item.id);
+        // Fallback logic for unit_price_cents
+        let price = item.unit_price_cents;
+        if (typeof price !== 'number' || isNaN(price)) {
+          if (typeof item.price_cents === 'number') {
+            price = item.price_cents;
+            console.warn('Fallback: using price_cents for unit_price_cents', item);
+          } else if (typeof item.price === 'number') {
+            price = item.price;
+            console.warn('Fallback: using price for unit_price_cents', item);
+          } else {
+            price = 0;
+            console.warn('No price found for item, defaulting to 0', item);
+          }
+        }
         let newCart;
-        if(exists) {
-          newCart = prev.map(ci => 
+        if (exists) {
+          newCart = prev.map(ci =>
             ci.id === item.id
-              ? {...ci, quantity: ci.quantity + qty, line_total_cents: (ci.quantity + qty) * ci.unit_price_cents }
+              ? {
+                  ...ci,
+                  quantity: ci.quantity + qty,
+                  unit_price_cents: price,
+                  line_total_cents: (ci.quantity + qty) * price,
+                }
               : ci
           );
         } else {
@@ -79,8 +98,9 @@ const useCart = ({ onAddedToCart, onOrderPlaced} = {}) => {
             ...prev,
             {
               ...item,
+              unit_price_cents: price,
               quantity: qty,
-              line_total_cents: qty * item.unit_price_cents,
+              line_total_cents: qty * price,
             },
           ];
         }
@@ -94,7 +114,7 @@ const useCart = ({ onAddedToCart, onOrderPlaced} = {}) => {
     try {
       setAddingToCart(true);
 
-      const response = await fetch(`http://localhost:8000/cart/add-item`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/add-item`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +153,7 @@ const useCart = ({ onAddedToCart, onOrderPlaced} = {}) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/cart/update-item`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/update-item`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -167,7 +187,7 @@ const useCart = ({ onAddedToCart, onOrderPlaced} = {}) => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/cart/remove-item?menu_item_id=${item.menu_item_id}`,
+        `${process.env.REACT_APP_API_URL}/cart/remove-item?menu_item_id=${item.menu_item_id}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
@@ -194,7 +214,7 @@ const useCart = ({ onAddedToCart, onOrderPlaced} = {}) => {
     };
 
     try {
-      const response = await fetch(`http://localhost:8000/cart/clear-cart`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/clear-cart`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -221,7 +241,7 @@ const useCart = ({ onAddedToCart, onOrderPlaced} = {}) => {
     try {
       setPlacingOrder(true);
 
-      const response = await fetch(`http://localhost:8000/cart/place-order`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/place-order`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -254,7 +274,7 @@ const useCart = ({ onAddedToCart, onOrderPlaced} = {}) => {
   try {
     for (const item of items) {
       console.log(item);
-      const response = await fetch(`http://localhost:8000/cart/add-item`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/cart/add-item`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

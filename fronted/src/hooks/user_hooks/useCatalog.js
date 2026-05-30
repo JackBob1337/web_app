@@ -10,7 +10,7 @@ const useCatalog =() => {
             try {
                 const token = getAuthToken();
     
-                const response = await fetch(`http://localhost:8000/menu/get_items_by_category/${categoryID}`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/get_items_by_category/${categoryID}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -38,7 +38,7 @@ const useCatalog =() => {
             try {
                 const token = getAuthToken();
     
-                const response = await fetch('http://localhost:8000/menu/get_all_categories', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/get_all_categories`, {
                     method: 'GET',
                     headers: {
                     Authorization: `Bearer ${token}`,
