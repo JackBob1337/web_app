@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import { toast } from 'react-toastify';
 import './CategoryModal.css'
 
 const CategoryModal = ({ isModalOpen, onClose, onSubmit }) => {
@@ -8,7 +9,7 @@ const CategoryModal = ({ isModalOpen, onClose, onSubmit }) => {
         e.preventDefault();
 
         if (!name.trim()) {
-            alert("Category name cannot be empty.");
+            toast.error("Category name cannot be empty.");
             return;
         }
 
@@ -23,7 +24,6 @@ const CategoryModal = ({ isModalOpen, onClose, onSubmit }) => {
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
                     <h2 className="modal-title">Creating a category</h2>
-                    <button className="modal-close" onClick={onClose}>X</button>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className="modal-bottom">

@@ -1,0 +1,161 @@
+.items-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    width: 100%;
+    padding-right: 20px;
+    box-sizing: border-box;
+}
+
+.item-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 260px;
+    min-height: 200px;
+    min-width: 260px;
+    max-width: 260px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.item-card:hover {
+    transform: translateY(-3px);
+    background: rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
+}
+
+.item-card::before {
+    content: none;
+}
+
+.item-image {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+    border: 1px solid var(--border);
+}
+
+.item-name {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text);
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 20px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
+.item-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.item-actions {
+    position: absolute;
+    gap: 12px;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    z-index: 3;
+    transition: opacity 0.2s;
+}
+
+.item-card:hover .item-actions {
+    opacity: 1;
+}
+
+.item-price {
+    flex-shrink: 0;
+    color: var(--text);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
+.item-description {
+    color: var(--text-muted);
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.edit-item-btn, .delete-item-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+}
+
+.edit-item-icon {
+    width: 22px;
+    height: 22px;
+    fill: var(--icon-color);
+}
+
+.delete-item-icon {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: var(--icon-color);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.add-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
+  min-height: 200px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.add-item-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

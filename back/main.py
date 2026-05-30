@@ -16,7 +16,7 @@ app.include_router(users_router)
 app.include_router(menu_router)
 app.include_router(cart_router)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="back/static"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,4 +28,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-

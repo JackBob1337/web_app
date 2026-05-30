@@ -2,10 +2,10 @@ import React, {useState, useEffect} from 'react'
 import { AnimatePresence} from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
-import useCatalog from '../../hooks/useCatalog';
-import useCart from '../../hooks/useCart';
-import useProfile from '../../hooks/useProfile';
-import useOrders from '../../hooks/useOrders';
+import useCatalog from '../../hooks/user_hooks/useCatalog';
+import useCart from '../../hooks/user_hooks/useCart';
+import useProfile from '../../hooks/user_hooks/useProfile';
+import useOrders from '../../hooks/user_hooks/useOrders';
 
 import CategorySection from '../../components/categories/CategorySection';
 import UserCard  from '../../components/user_info/UserCard';

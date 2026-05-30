@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import useRegister from '../../hooks/useRegister';
+import useRegister from '../../hooks/user_hooks/useRegister';
 
 const SignUpForm = ({ onRegisterSuccess, direction, slideVariants }) => {
     const { form, error, isLoading, handleChange, handleSubmit } = useRegister({ onRegisterSuccess });

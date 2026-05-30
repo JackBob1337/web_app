@@ -25,3 +25,42 @@ dist/
 # IDE
 .vscode/
 .idea/
+
+# User and sensitive data
+users.txt
+back/users.txt
+*.db
+*.sqlite3
+*.log
+*.pem
+*.key
+*.crt
+
+# Static/media/uploads
+static/uploads/
+back/static/
+
+# Python cache
+back/__pycache__/
+back/*/__pycache__/
+back/tests/__pycache__/
+back/core/__pycache__/
+back/crud/__pycache__/
+back/db/__pycache__/
+back/models/__pycache__/
+back/routers/__pycache__/
+back/services/__pycache__/
+
+# Frontend build and node
+fronted/node_modules/
+fronted/build/
+fronted/.pytest_cache/
+fronted/.env
+fronted/.DS_Store
+
+# General
+*.pyc
+*.pyo
+.env.*
+.DS_Store
+Thumbs.db

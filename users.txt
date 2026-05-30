@@ -1,8 +1,21 @@
-﻿
-admin@example.com → AdminPass123
-
-
-john@example.com → JohnPass123
-emma@example.com → EmmaPass123
-mike@example.com → MikePass123
-sophia@example.com → SophiaPass123
+admin: admin | admin@example.com | admin123 | +70000000000
+user: saramartinez45 | saramartinez45@example.com | jyjhKi1O | +79038674147
+user: johngarcia20 | johngarcia20@example.com | 7UcLodSl | +79288281239
+user: tommiller45 | tommiller45@example.com | ooFhVQFB | +79358663643
+user: sarajohnson38 | sarajohnson38@example.com | ZcqaaOc4 | +79985497721
+user: christhompson93 | christhompson93@example.com | Fh8buJXP | +79724908470
+user: olgathompson67 | olgathompson67@example.com | 88db73Nl | +79499116072
+user: paulmartin39 | paulmartin39@example.com | i81HNo95 | +79428818814
+user: mikewhite92 | mikewhite92@example.com | iexvbr3l | +79808418949
+user: saramartin88 | saramartin88@example.com | oKFTAXvh | +79819742431
+user: annawhite32 | annawhite32@example.com | InYW2SyM | +79759397995
+user: dashaharris14 | dashaharris14@example.com | YKk2wgRm | +79678634135
+user: ninataylor39 | ninataylor39@example.com | Z9I4ejKI | +79137803387
+user: katejohnson60 | katejohnson60@example.com | IHZEmbgN | +79737284749
+user: lenamartin96 | lenamartin96@example.com | wUa76JwF | +79217688609
+user: janejackson54 | janejackson54@example.com | Wt3g6x6B | +79397945048
+user: maxjohnson71 | maxjohnson71@example.com | bGfWmWy1 | +79900166715
+user: dashamartin72 | dashamartin72@example.com | K7Ms4Ur3 | +79305883199
+user: tomwilliams28 | tomwilliams28@example.com | HVbMoJ8M | +79757024631
+user: dashawhite81 | dashawhite81@example.com | 8a1NCHgY | +79802092345
+user: ninajohnson12 | ninajohnson12@example.com | 7pvSzRHt | +79391963260
