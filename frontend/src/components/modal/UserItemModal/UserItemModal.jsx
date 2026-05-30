@@ -40,7 +40,7 @@ const UserItemModal = ({ isOpen, onClose, item, onAddToCart, addingToCart }) => 
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       >
         <img 
-            src={`http://localhost:8000${item.image_url}`} 
+            src={`${process.env.REACT_APP_API_URL}${item.image_url}`}
             alt={item.name} 
             className="item-image" 
         />
