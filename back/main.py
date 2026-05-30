@@ -11,13 +11,6 @@ setup_logging()
 
 app = FastAPI()
 
-app.include_router(auth_router)
-app.include_router(users_router)
-app.include_router(menu_router)
-app.include_router(cart_router)
-
-app.mount("/static", StaticFiles(directory="back/static"), name="static")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,3 +18,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth_router)
+app.include_router(users_router)
+app.include_router(menu_router)
+app.include_router(cart_router)
+
+app.mount("/static", StaticFiles(directory="back/static"), name="static")
+
+
