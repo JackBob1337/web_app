@@ -5,7 +5,7 @@ const CartItemCard = ( {item, openQtyItemId, onOpenStepper, onQtyClick, onRemove
   return (
     <div key={item.id} className='cart-item-card'>
         <img
-            src={`http://localhost:8000${item.image_url}`}
+            src={`${process.env.REACT_APP_API_URL}${item.image_url}`}
             alt={item.name}
             className='cart-item-img'
         />

@@ -8,7 +8,7 @@ const ItemCard = ({ item, selectedItemId, onItemClick }) => {
       onClick={() => onItemClick(item)}
     >
       <img 
-        src={`http://localhost:8000${item.image_url}`} 
+        src={`${process.env.REACT_APP_API_URL}${item.image_url}`}
         alt={item.name} 
         className="item-image" 
       />
