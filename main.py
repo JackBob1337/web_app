@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import engine
-from back.db.base import Base
 from back.routers.auth import router as auth_router
 from back.routers.users import router as users_router
 from back.routers.menu import router as menu_router
@@ -12,10 +10,6 @@ from back.core.logs import setup_logging
 setup_logging()
 
 app = FastAPI()
-
-@app.on_event("startup")
-def startup():
-    Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
