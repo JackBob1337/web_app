@@ -1,6 +1,6 @@
 import React from "react";
 import ItemCard from "./ItemCard";
-import useItems from "../../hooks/admin_hooks/useItems";
+
 
 const ItemList = ({ items, onEdit, onDeleteItem, categoryId, onAddItem }) => {
   return (
