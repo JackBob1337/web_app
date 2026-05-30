@@ -98,7 +98,7 @@ const EditUserProfileModal = ({isOpen, onClose, userInfo, onSaved}) => {
 
       try {
         setErrors({});
-        const response = await fetch ("http://localhost:8000/users/me", {
+        const response = await fetch ("process.env.REACT_APP_API_URL/users/me", {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -143,7 +143,7 @@ const EditUserProfileModal = ({isOpen, onClose, userInfo, onSaved}) => {
 
       try {
         setErrors({});
-        const response = await fetch ("http://localhost:8000/users/me/change_password", {
+        const response = await fetch ("process.env.REACT_APP_API_URL/users/me/change_password", {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
