@@ -20,7 +20,6 @@ Full-stack food delivery web application with user and admin interfaces.
 
 **Infrastructure**
 - Deployed on Railway
-- CI/CD via GitHub Actions
 
 ---
 
